@@ -34,6 +34,7 @@ export enum Task {
   Test = 'test',
   Lint = 'lint',
   TypeCheck = 'typeCheck',
+  Generate = 'generate',
 }
 
 // ==================================================================
@@ -46,6 +47,7 @@ export interface WorkspaceTasks {
   readonly test: SeriesHook<TestWorkspaceTask>;
   readonly lint: SeriesHook<LintWorkspaceTask>;
   readonly typeCheck: SeriesHook<TypeCheckWorkspaceTask>;
+  readonly generate: SeriesHook<TypeCheckWorkspaceTask>;
 }
 
 export interface ProjectTasks<Type extends Project> {
@@ -222,4 +224,18 @@ export interface DevWorkspaceTask {
 export interface DevProjectTask<Type extends Project> {
   readonly hooks: DevProjectTaskHooks<Type>;
   readonly options: DevTaskOptions;
+}
+
+// ==================================================================
+// GENERATE
+// ==================================================================
+
+export interface GenerateTaskOptions {}
+
+export interface GenerateWorkspaceTaskHooks {
+  readonly configureHooks: WaterfallHook<LintWorkspaceConfigurationHooks>;
+  readonly configure: SeriesHook<LintWorkspaceConfigurationHooks>;
+  readonly pre: WaterfallHook<Step[], LintWorkspaceStepDetails>;
+  readonly steps: WaterfallHook<Step[], LintWorkspaceStepDetails>;
+  readonly post: WaterfallHook<Step[], LintWorkspaceStepDetails>;
 }

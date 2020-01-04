@@ -1,4 +1,10 @@
-import {clearScreenDown, clearLine, moveCursor, cursorTo} from 'readline';
+import {
+  clearScreenDown,
+  clearLine,
+  moveCursor,
+  cursorTo,
+  createInterface,
+} from 'readline';
 import {link} from 'ansi-escapes';
 import chalk from 'chalk';
 import {supportsHyperlink} from 'supports-hyperlinks';
@@ -104,6 +110,50 @@ export class Ui {
     this.stderr = new FormattedStream(stderr);
     this.level = level;
   }
+
+  ask = (
+    question: string,
+    options?: {
+      default?: string;
+      required?: boolean;
+    },
+  ) => {
+    const {default: defaultAnswer = '', required = false} = options || {};
+
+    const finalQueston = [
+      chalk`{yellow → ${question}} `,
+      defaultAnswer ? chalk`{dim default “${defaultAnswer}”} ` : '',
+    ].join('');
+
+    const rl = createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      prompt: finalQueston,
+    });
+
+    return new Promise((resolve) => {
+      rl.prompt();
+
+      rl.on('line', (answer) => {
+        if (answer !== '') {
+          resolve(answer);
+          process.stdout.write('\n');
+          rl.close();
+        }
+
+        if (defaultAnswer !== '') {
+          resolve(defaultAnswer);
+          process.stdout.write('\n');
+          rl.close();
+        }
+
+        if (required && !defaultAnswer && !answer) {
+          process.stdout.write(chalk`{dim An answer is required}`);
+          process.stdout.write('\n');
+        }
+      }).prompt();
+    });
+  };
 
   log = (value: Loggable, {level = LogLevel.Info}: LogOptions = {}) => {
     if (!this.canLogLevel(level)) {

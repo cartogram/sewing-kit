@@ -6,6 +6,7 @@ import {dev} from './dev';
 import {test} from './test';
 import {lint} from './lint';
 import {typeCheck} from './type-check';
+import {generate} from './generate';
 
 const commands = new Map([
   ['build', build],
@@ -13,6 +14,7 @@ const commands = new Map([
   ['test', test],
   ['lint', lint],
   ['type-check', typeCheck],
+  ['generate', generate],
 ]);
 
 run();

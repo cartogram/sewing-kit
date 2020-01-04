@@ -101,6 +101,7 @@ export async function createWorkspaceTasksAndApplyPlugins(
     test: new SeriesHook(),
     lint: new SeriesHook(),
     typeCheck: new SeriesHook(),
+    generate: new SeriesHook(),
   };
 
   const plugins = pluginSource.pluginsForWorkspace(workspace);
